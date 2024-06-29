@@ -12,3 +12,4 @@ describe('effect', () => {
         expect(observed.foo).toBe(1)
     })
 })
+
