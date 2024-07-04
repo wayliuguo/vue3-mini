@@ -1,3 +1,4 @@
+import { ReactiveFlags } from '../shared'
 import { track, trigger } from './effect'
 
 // reactive getter 和 setter
@@ -14,6 +15,13 @@ const readonlyGet = createGetter(true)
  */
 function createGetter(isReadonly = false) {
     return function get(target: object, key: string | symbol) {
+        // 如果获取的key 是 is_reactive，则用于判断是否是响应式对象
+        if (key === ReactiveFlags.IS_REACTIVE) {
+            return !isReadonly
+        } else if (key === ReactiveFlags.IS_READONLY) {
+            return isReadonly
+        }
+
         const res = Reflect.get(target, key)
 
         if (!isReadonly) {

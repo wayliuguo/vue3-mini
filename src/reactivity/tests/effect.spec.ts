@@ -73,6 +73,7 @@ describe('effect', () => {
         expect(dummy).toBe(2)
         stop(runner)
         obj.prop = 3
+        // obj.prop++ // 拆分: obj.prop = obj.prop+1, 会重新触发get收集依赖，导致没有清空到依赖
         expect(dummy).toBe(2)
 
         // stopped effect sholud still be manually callable

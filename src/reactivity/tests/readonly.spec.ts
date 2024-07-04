@@ -1,4 +1,4 @@
-import { readonly } from '../reactive'
+import { isReanonly, readonly } from '../reactive'
 
 describe('readonly', () => {
     it('happy path', () => {
@@ -10,6 +10,8 @@ describe('readonly', () => {
         }
         const wrapped: any = readonly(original)
         expect(wrapped).not.toBe(original)
+        expect(isReanonly(wrapped)).toBe(true)
+        expect(isReanonly(original)).toBe(false)
         expect(wrapped.foo).toBe(1)
     })
 
