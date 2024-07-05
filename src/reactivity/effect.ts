@@ -4,6 +4,15 @@ import { extend } from '../shared'
 const targetMap = new WeakMap()
 // 当前的 effect
 let activeEffect: any
+let shouldTrack: boolean
+
+/**
+ * 判断是否正在收集依赖
+ * @returns boolean
+ */
+function isTracking() {
+    return shouldTrack && activeEffect
+}
 
 /**
  * 收集依赖,由proxy对象getter触发，构建的数据如下：
@@ -14,6 +23,8 @@ let activeEffect: any
  * @param key proxy 对象 key
  */
 export function track(target: object, key: string | symbol) {
+    if (!isTracking()) return
+
     let depsMap = targetMap.get(target)
     if (!depsMap) {
         depsMap = new Map()
@@ -25,7 +36,7 @@ export function track(target: object, key: string | symbol) {
         depsMap.set(key, dep)
     }
 
-    if (!activeEffect) return
+    if (dep.has(activeEffect)) return
 
     dep.add(activeEffect)
     // activeEffect 的 deps 收集 dep
@@ -82,8 +93,19 @@ class ReactiveEffect {
 
     // 使用箭头函数优化，其指向会绑定在ReactiveEffect实例上
     run = () => {
+        if (!this.active) {
+            // 如果调用stop 清空依赖了
+            return this._fn()
+        }
+
+        // 如果未调用stop清空依赖，则设置activeEffect未当前实例，且全局标识shouldTrack(应收集依赖)置为true
+        shouldTrack = true
         activeEffect = this
-        return this._fn()
+
+        const result = this._fn()
+        // 重置shouldTrack(应收集依赖)为false
+        shouldTrack = false
+        return result
     }
     /* run() {
         activeEffect = this
