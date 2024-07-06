@@ -1,4 +1,4 @@
-import { isObject, ReactiveFlags } from '../shared'
+import { extend, isObject, ReactiveFlags } from '../shared'
 import { track, trigger } from './effect'
 import { reactive, readonly } from './reactive'
 
@@ -9,12 +9,16 @@ const set = createSetter()
 // readonly getter
 const readonlyGet = createGetter(true)
 
+// shallowReadonly getter
+const shallowReadonlyGet = createGetter(true, true)
+
 /**
  * 生成 getter 函数
  * @param isReadonly boolean 是否仅读的
- * @returns {Function}
+ * @param isShallow boolean 是否仅浅层是响应式的
+ * @returns  {Function}
  */
-function createGetter(isReadonly = false) {
+function createGetter(isReadonly = false, isShallow = false) {
     return function get(target: object, key: string | symbol) {
         // 如果获取的key 是 is_reactive，则用于判断是否是响应式对象
         if (key === ReactiveFlags.IS_REACTIVE) {
@@ -24,6 +28,11 @@ function createGetter(isReadonly = false) {
         }
 
         const res = Reflect.get(target, key)
+
+        // 如果是浅层代理，则直接返回 res
+        if (isShallow) {
+            return res
+        }
 
         // 如果 res 是对象，再次递归处理
         if (isObject(res)) {
@@ -66,3 +75,8 @@ export const readonlyHandlers = {
         return true
     }
 }
+
+// shallowReadonlyHandlers proxy handler
+export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
+    get: shallowReadonlyGet
+})

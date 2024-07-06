@@ -1,12 +1,16 @@
 import { ReactiveFlags } from '../shared'
-import { mutableHandlers, readonlyHandlers } from './baseHandlers'
+import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from './baseHandlers'
 
 export function reactive(raw: object) {
-    return createActiveObject(raw, mutableHandlers)
+    return createReactiveObject(raw, mutableHandlers)
 }
 
 export function readonly(raw: object) {
-    return createActiveObject(raw, readonlyHandlers)
+    return createReactiveObject(raw, readonlyHandlers)
+}
+
+export function shallowReadonly(raw: any) {
+    return createReactiveObject(raw, shallowReadonlyHandlers)
 }
 
 export function isReactive(raw: any) {
@@ -19,6 +23,6 @@ export function isReanonly(raw: any) {
     return !!raw[ReactiveFlags.IS_READONLY]
 }
 
-function createActiveObject(raw: object, baseHandlers: any) {
+function createReactiveObject(raw: object, baseHandlers: any) {
     return new Proxy(raw, baseHandlers)
 }
