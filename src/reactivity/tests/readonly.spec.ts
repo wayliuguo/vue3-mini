@@ -10,8 +10,13 @@ describe('readonly', () => {
         }
         const wrapped: any = readonly(original)
         expect(wrapped).not.toBe(original)
+        // 断言处理后的对象是readonly
         expect(isReanonly(wrapped)).toBe(true)
+        expect(isReanonly(wrapped.bar)).toBe(true)
+        // 断言原对象非readonly
         expect(isReanonly(original)).toBe(false)
+        expect(isReanonly(original.bar)).toBe(false)
+        // 断言处理后的对象可访问属性
         expect(wrapped.foo).toBe(1)
     })
 
@@ -22,6 +27,7 @@ describe('readonly', () => {
         })
         user.age = 11
 
+        // 断言readonly 对象赋值会触发警告
         expect(console.warn).toHaveBeenCalled()
     })
 })
