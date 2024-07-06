@@ -1,4 +1,4 @@
-import { isReactive, reactive } from '../reactive'
+import { isProxy, isReactive, reactive } from '../reactive'
 
 describe('effect', () => {
     it('happy path', () => {
@@ -12,9 +12,15 @@ describe('effect', () => {
         expect(observed).not.toBe(original)
         // 断言处理后对象属性可正确访问
         expect(observed.foo).toBe(1)
+
+        // 验证isReactive 函数
         // 断言处理后的对象是响应式对象，isReactive函数返回正确
         expect(isReactive(observed)).toBe(true)
         expect(isReactive(original)).toBe(false)
+
+        // 验证 isProxy
+        // 断言isProxy函数处理reactive对象返回正确
+        expect(isProxy(observed)).toBe(true)
     })
     test('nested reactive', () => {
         const original = {

@@ -1,4 +1,4 @@
-import { isReanonly, readonly } from '../reactive'
+import { isProxy, isReadonly, readonly } from '../reactive'
 
 describe('readonly', () => {
     it('happy path', () => {
@@ -9,15 +9,23 @@ describe('readonly', () => {
             }
         }
         const wrapped: any = readonly(original)
+        // 断言处理前后两对象非同一个对象
         expect(wrapped).not.toBe(original)
-        // 断言处理后的对象是readonly
-        expect(isReanonly(wrapped)).toBe(true)
-        expect(isReanonly(wrapped.bar)).toBe(true)
-        // 断言原对象非readonly
-        expect(isReanonly(original)).toBe(false)
-        expect(isReanonly(original.bar)).toBe(false)
+
+        // 验证  isReaonly
+        // 断言处理后的对象及其属性是readonly
+        expect(isReadonly(wrapped)).toBe(true)
+        expect(isReadonly(wrapped.bar)).toBe(true)
+        // 断言原对象及其属性非readonly
+        expect(isReadonly(original)).toBe(false)
+        expect(isReadonly(original.bar)).toBe(false)
+
         // 断言处理后的对象可访问属性
         expect(wrapped.foo).toBe(1)
+
+        // 验证 isProxy
+        // 断言isProxy函数处理readonly对象返回正确
+        expect(isProxy(wrapped)).toBe(true)
     })
 
     it('warn when call set', () => {

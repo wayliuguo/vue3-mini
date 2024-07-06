@@ -1,4 +1,4 @@
-import { isReanonly, shallowReadonly } from '../reactive'
+import { isReadonly, shallowReadonly } from '../reactive'
 
 describe('shallowReadonly', () => {
     it('should not make non-reactive properities reactive', () => {
@@ -9,9 +9,9 @@ describe('shallowReadonly', () => {
         })
 
         // 断言处理后的对象是 readonly
-        expect(isReanonly(props)).toBe(true)
+        expect(isReadonly(props)).toBe(true)
         // 断言处理后的对象的属性非 readonly
-        expect(isReanonly(props.n)).toBe(false)
+        expect(isReadonly(props.n)).toBe(false)
     })
 
     it('warn when call set', () => {

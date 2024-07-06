@@ -13,14 +13,19 @@ export function shallowReadonly(raw: any) {
     return createReactiveObject(raw, shallowReadonlyHandlers)
 }
 
-export function isReactive(raw: any) {
+export function isReactive(value: any) {
     // 如果是非reactive对象，raw[ReactiveFlags.IS_REACTIVE]会得到undefined，这里转成了boolean
-    return !!raw[ReactiveFlags.IS_REACTIVE]
+    return !!value[ReactiveFlags.IS_REACTIVE]
 }
 
-export function isReanonly(raw: any) {
+export function isReadonly(value: any) {
     // 强行转为 boolean
-    return !!raw[ReactiveFlags.IS_READONLY]
+    return !!value[ReactiveFlags.IS_READONLY]
+}
+
+// 判断是否有 reactive 或 readonly 处理的响应式对象
+export function isProxy(value: any) {
+    return isReactive(value) || isReadonly(value)
 }
 
 function createReactiveObject(raw: object, baseHandlers: any) {
