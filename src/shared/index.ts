@@ -3,7 +3,8 @@ export const extend = Object.assign
 // reactive 标识枚举
 export const enum ReactiveFlags {
     IS_REACTIVE = '__v_isReactive',
-    IS_READONLY = '__v_isReadonly'
+    IS_READONLY = '__v_isReadonly',
+    IS_REF = '__v_isRef'
 }
 // 判断是对象
 export const isObject = (val: any) => val !== null && typeof val === 'object'

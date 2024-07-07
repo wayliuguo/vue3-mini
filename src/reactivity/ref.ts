@@ -1,4 +1,4 @@
-import { hanChanged, isObject } from '../shared'
+import { hanChanged, isObject, ReactiveFlags } from '../shared'
 import { isTracking, trackEffects, triggerEffects } from './effect'
 import { reactive } from './reactive'
 
@@ -7,6 +7,7 @@ class RefImpl {
     private _value: any // 私有value
     public dep: any // 依赖
     private _rawValue: any // 私有原数据
+    public [ReactiveFlags.IS_REF]: boolean = true
     constructor(value: any) {
         this._rawValue = value
         this._value = convert(value)
@@ -32,6 +33,20 @@ class RefImpl {
 
 export function ref(value: any) {
     return new RefImpl(value)
+}
+
+/**
+ * 判断是否Ref
+ * @param ref RefImpl 实例
+ * @returns {boolean}
+ */
+export function isRef(ref: any) {
+    return !!ref[ReactiveFlags.IS_REF]
+}
+
+// 如果参数是ref，则返回内部值，否则返回参数本身
+export function unRef(ref: any) {
+    return isRef(ref) ? ref.value : ref
 }
 
 /**
