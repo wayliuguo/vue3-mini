@@ -7,3 +7,6 @@ export const enum ReactiveFlags {
 }
 // 判断是对象
 export const isObject = (val: any) => val !== null && typeof val === 'object'
+
+// 是否变更
+export const hanChanged = (val: any, newValue: any) => !Object.is(val, newValue) 

@@ -10,7 +10,7 @@ let shouldTrack: boolean
  * 判断是否正在收集依赖
  * @returns boolean
  */
-function isTracking() {
+export function isTracking() {
     return shouldTrack && activeEffect
 }
 
@@ -36,8 +36,16 @@ export function track(target: object, key: string | symbol) {
         depsMap.set(key, dep)
     }
 
-    if (dep.has(activeEffect)) return
+    trackEffects(dep)
+}
 
+/**
+ * 传入 dep，收集依赖
+ * @param dep 依赖 Map
+ * @returns {undefined}
+ */
+export function trackEffects(dep: any) {
+    if (dep.has(activeEffect)) return
     dep.add(activeEffect)
     // activeEffect 的 deps 收集 dep
     activeEffect.deps.push(dep)
@@ -53,6 +61,14 @@ export function trigger(target: object, key: string | symbol) {
     let depsMap = targetMap.get(target)
     let dep = depsMap.get(key)
 
+    triggerEffects(dep)
+}
+
+/**
+ * 触发dep中的依赖
+ * @param dep 依赖
+ */
+export function triggerEffects(dep: any) {
     for (const effect of dep) {
         // 如果effect 有设置 sceduler,则执行scheduler，否则执行effect
         if (effect.scheduler) {
