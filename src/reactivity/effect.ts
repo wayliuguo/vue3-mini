@@ -95,7 +95,7 @@ export function effect(fn: Function, options: any = {}) {
 }
 
 type Scheduler = (...args: any[]) => void
-class ReactiveEffect {
+export class ReactiveEffect {
     private _fn: Function // effect 执行函数
     public scheduler?: Scheduler // effect 调度器
     deps = [] //
