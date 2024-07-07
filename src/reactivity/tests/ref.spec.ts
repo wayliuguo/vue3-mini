@@ -1,6 +1,6 @@
 import { effect } from '../effect'
 import { reactive } from '../reactive'
-import { isRef, ref, unRef } from '../ref'
+import { isRef, proxyRefs, ref, unRef } from '../ref'
 
 describe('ref', () => {
     it('happy path', () => {
@@ -46,6 +46,7 @@ describe('ref', () => {
         expect(dummy).toBe(2)
     })
 
+    // 校验 isRef
     it('isRef', () => {
         const a = ref(1)
         const user = reactive({
@@ -57,10 +58,36 @@ describe('ref', () => {
         expect(isRef(user)).toBe(false)
     })
 
+    // 校验 unRef
     it('unRef', () => {
         const a = ref(1)
 
         expect(unRef(a)).toBe(1)
         expect(unRef(1)).toBe(1)
+    })
+
+    // 校验 proxyRefs，ref 省略.value取值（如template中）
+    it('proxyRefs', () => {
+        const user = {
+            age: ref(18),
+            name: 'well'
+        }
+
+        // proxyUser 对象，可以省略.value
+        const proxyUser = proxyRefs(user)
+        expect(user.age.value).toBe(18)
+        expect(proxyUser.age).toBe(18)
+        expect(user.name).toBe('well')
+        expect(proxyUser.name).toBe('well')
+
+        // proxyRefs 处理后，原属性是ref变为基本类型
+        proxyUser.age = 20
+        expect(proxyUser.age).toBe(20)
+        expect(user.age.value).toBe(20)
+
+        // proxyRefs 处理后，原属性是基本类型变为ref
+        proxyUser.age = ref(20)
+        expect(proxyUser.age).toBe(20)
+        expect(user.age.value).toBe(20)
     })
 })
