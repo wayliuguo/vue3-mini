@@ -1,3 +1,8 @@
+/**
+ * 创建组件实例
+ * @param vnode 虚拟节点
+ * @returns
+ */
 export function createComponentInstance(vnode: any) {
     const component = {
         vnode,
@@ -7,6 +12,10 @@ export function createComponentInstance(vnode: any) {
     return component
 }
 
+/**
+ * 设置组件
+ * @param instance 组件实例
+ */
 export function setupComponent(instance: any) {
     // TODO
     // initProps()
@@ -15,6 +24,10 @@ export function setupComponent(instance: any) {
     setupStatefulComponent(instance)
 }
 
+/**
+ * 设置有状态组件
+ * @param instance 组件实例
+ */
 function setupStatefulComponent(instance: any) {
     const Component = instance.type
 
@@ -25,11 +38,16 @@ function setupStatefulComponent(instance: any) {
         // 如果是 Object，则注入到组件上下文中
         const setupResult = setup()
 
-        handleSetupResult(setupResult)
+        handleSetupResult(instance, setupResult)
     }
 }
 
-function handleSetupResult(setupResult: any) {
+/**
+ * 处理setup结果
+ * @param instance
+ * @param setupResult
+ */
+function handleSetupResult(instance: any, setupResult: any) {
     // TODO function
     if (typeof setupResult === 'object') {
         instance.setupState = setupResult
