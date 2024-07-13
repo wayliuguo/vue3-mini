@@ -1,3 +1,4 @@
+import pkg from './package.json' with { type: 'json'}
 import typescript from '@rollup/plugin-typescript'
 export default {
     input: './src/index.ts',
@@ -6,11 +7,11 @@ export default {
         // 2. esm -> es-module
         {
             format: 'cjs',
-            file: 'lib/guide-mini-vue3.cjs.js'
+            file: pkg.main
         },
         {
             format: 'es',
-            file: 'lib/guide-mini-vue3.esm.js'
+            file: pkg.module
         }
     ],
     // 使用插件处理ts

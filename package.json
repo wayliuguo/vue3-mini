@@ -1,7 +1,8 @@
 {
     "name": "vue3-mini",
     "version": "1.0.0",
-    "main": "index.js",
+    "main": "lib/guide-mini-vue3.cjs.js",
+    "module": "lib/guide-mini-vue3.esm.js",
     "author": "liuguowei <1085550655@qq.com>",
     "license": "MIT",
     "type": "module",

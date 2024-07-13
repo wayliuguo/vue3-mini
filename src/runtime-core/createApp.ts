@@ -13,7 +13,7 @@ export function createApp(rootComponent: any) {
             // components --> vnode(把组件转换为虚拟节点)
             const vnode = createVnode(rootComponent)
 
-            render(vnode, rootComponent)
+            render(vnode, rootContainer)
         }
     }
 }
