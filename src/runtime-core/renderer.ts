@@ -40,8 +40,8 @@ function processElement(vnode: any, container: any) {
  * @param container 容器
  */
 function mountElement(vnode: any, container: any) {
-    // 元素
-    const el = document.createElement(vnode.type)
+    // 创建元素（赋值到vnode上）
+    const el = (vnode.el = document.createElement(vnode.type))
 
     // children
     const { children } = vnode
@@ -79,16 +79,21 @@ function processComponent(vnode: any, container: any) {
 
 /**
  * 挂载组件
- * @param vnode 虚拟节点
+ * @param initialVnode 虚拟节点
  * @param container 容器
  */
-function mountComponent(vnode: any, container: any) {
-    const instance = createComponentInstance(vnode)
+function mountComponent(initialVnode: any, container: any) {
+    const instance = createComponentInstance(initialVnode)
     setupComponent(instance)
-    setupRenderEffect(instance, container)
+    setupRenderEffect(instance, initialVnode, container)
 }
 
-function setupRenderEffect(instance: any, container: any) {
-    const subTree = instance.render()
+function setupRenderEffect(instance: any, initialVnode: any, container: any) {
+    const { proxy } = instance
+    // 使render 函数的执行时指向 proxy对象，以获取正确数据
+    const subTree = instance.render.call(proxy)
     patch(subTree, container)
+
+    // 把根阶段元素赋值组件元素
+    initialVnode.el = subTree.el
 }

@@ -1,6 +1,9 @@
 import { h } from '../../lib/guide-mini-vue3.esm.js'
+window.self = null
 export const App = {
     render() {
+        // 可以在控制台通过 self.$el 获取组件实例
+        window.self = this
         return h(
             'div',
             {
@@ -8,9 +11,9 @@ export const App = {
                 class: ['red', 'hard']
             },
             // 单个
-            // 'hi,' + this.msg
+            'hi,' + this.msg
             // 多个
-            [h('p', { class: 'red' }, 'hi'), h('p', { class: 'blue' }, 'mini-vue')]
+            // [h('p', { class: 'red' }, 'hi'), h('p', { class: 'blue' }, 'mini-vue')]
         )
     },
 

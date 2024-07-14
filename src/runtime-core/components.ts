@@ -1,3 +1,5 @@
+import { PublicInstanceProxyHandlers } from './componentPublicInstance'
+
 /**
  * 创建组件实例
  * @param vnode 虚拟节点
@@ -6,7 +8,8 @@
 export function createComponentInstance(vnode: any) {
     const component = {
         vnode,
-        type: vnode.type
+        type: vnode.type,
+        setupState: {} // 组件代理对象
     }
 
     return component
@@ -30,6 +33,15 @@ export function setupComponent(instance: any) {
  */
 function setupStatefulComponent(instance: any) {
     const Component = instance.type
+
+    // ctx
+    // 通过组件代理对象获取数据
+    instance.proxy = new Proxy(
+        {
+            _: instance
+        },
+        PublicInstanceProxyHandlers
+    )
 
     const { setup } = Component
     if (setup) {
