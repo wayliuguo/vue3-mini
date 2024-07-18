@@ -83,11 +83,37 @@ function processComponent(vnode: any, container: any) {
  * @param container 容器
  */
 function mountComponent(initialVnode: any, container: any) {
+    /**
+     * 创建组件实例，initialVnode格式如下
+     * {
+     *  vnode 虚拟节点
+        type: vnode.type, 组件本身内容（render(){}, setup(){}）
+        setupState: {} // 组件代理对象
+     * }
+     */
+    /**
+     * 创建完成的组件实例（instance），其格式如下
+     * {
+     *  proxy: proxy对象
+     *  render: render 函数
+     *  setupState: setup 执行的结果对象
+     *  type： 组件本身内容（render(){}, setup(){}）
+     *  vnode: 虚拟节点
+     * }
+     */
     const instance = createComponentInstance(initialVnode)
+    // 初始化组件状态
     setupComponent(instance)
+    // 创建渲染效果
     setupRenderEffect(instance, initialVnode, container)
 }
 
+/**
+ * 创建渲染效果
+ * @param instance 组件实例 
+ * @param initialVnode 虚拟节点
+ * @param container 容器
+ */
 function setupRenderEffect(instance: any, initialVnode: any, container: any) {
     const { proxy } = instance
     // 使render 函数的执行时指向 proxy对象，以获取正确数据

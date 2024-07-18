@@ -56,21 +56,28 @@ function setupStatefulComponent(instance: any) {
 
 /**
  * 处理setup结果
- * @param instance
- * @param setupResult
+ * @param instance 组件实例
+ * @param setupResult setup 函数执行的结果
  */
 function handleSetupResult(instance: any, setupResult: any) {
     // TODO function
     if (typeof setupResult === 'object') {
+        // 赋值 setup 函数执行的结果
         instance.setupState = setupResult
     }
 
+    // 完成组件注册
     finishComponentSetup(instance)
 }
 
+/**
+ * 完成组件注册
+ * @param instance 组件实例
+ */
 function finishComponentSetup(instance: any) {
     const Component = instance.type
     // if (Component.render) {
+    // 赋值组件的render 函数
     instance.render = Component.render
     // }
 }
