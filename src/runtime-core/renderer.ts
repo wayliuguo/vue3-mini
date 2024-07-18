@@ -2,7 +2,7 @@ import { isObject } from '../shared/index'
 import { createComponentInstance, setupComponent } from './components'
 
 /**
- * render
+ * render 渲染函数
  * @param vnode 虚拟节点
  * @param container 容器
  */
@@ -11,7 +11,7 @@ export function render(vnode: any, container: any) {
 }
 
 /**
- * patch
+ * patch 对比节点更新
  * @param vnode 虚拟节点
  * @param container 容器
  */
