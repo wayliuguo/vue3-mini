@@ -7,6 +7,11 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
 
+    // 对于 Typescript，使用 Prettier 作为默认格式化器
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
     // 对于 JSON，您可以选择使用 VS Code 自带的格式化器，或者如果您希望使用 Prettier，也可以更改这里的设置
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode" // 如果希望 JSON 也使用 Prettier 格式化
