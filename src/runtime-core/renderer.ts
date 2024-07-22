@@ -1,4 +1,4 @@
-import { isObject } from '../shared/index'
+import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './components'
 
 /**
@@ -16,11 +16,13 @@ export function render(vnode: any, container: any) {
  * @param container 容器
  */
 function patch(vnode: any, container: any) {
-    if (typeof vnode.type === 'string') {
-        // 如果vnode.type 是字符串类型,则是 element
+    // ShapeFlags(标识vnode 类型)
+    const { shapeFlag } = vnode
+    if (shapeFlag & ShapeFlags.ELEMENT) {
+        // 如果vnode 是元素类型
         processElement(vnode, container)
-    } else if (isObject(vnode.type)) {
-        // 如果vnode.type 是对象类型,则是组件
+    } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+        // 如果vnode 是组件类型
         processComponent(vnode, container)
     }
 }
@@ -44,12 +46,12 @@ function mountElement(vnode: any, container: any) {
     const el = (vnode.el = document.createElement(vnode.type))
 
     // children
-    const { children } = vnode
-    if (typeof children === 'string') {
-        // 如果 children 是字符串,则直接赋值为元素内容
+    const { children, shapeFlag } = vnode
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+        // 如果是 text_children
         el.textContent = children
-    } else if (Array.isArray(children)) {
-        // 如果是数组,则遍历挂载到元素上
+    } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+        // 如果是 array_children
         mountChildren(vnode, el)
     }
     // props
@@ -110,7 +112,7 @@ function mountComponent(initialVnode: any, container: any) {
 
 /**
  * 创建渲染效果
- * @param instance 组件实例 
+ * @param instance 组件实例
  * @param initialVnode 虚拟节点
  * @param container 容器
  */
