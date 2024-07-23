@@ -7,5 +7,6 @@ module.exports = {
     singleQuote: true, //使用单引号
     arrowParens: 'avoid', //  箭头函数括号
     endOfLine: 'auto', // 结尾换行自动
-    jsxBracketSameLine: true
+    jsxBracketSameLine: true, // JSX中是否使用单引号
+    singleAttributePerLine: true
 }

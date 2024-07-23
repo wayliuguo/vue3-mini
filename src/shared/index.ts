@@ -11,3 +11,6 @@ export const isObject = (val: any) => val !== null && typeof val === 'object'
 
 // 是否变更
 export const hanChanged = (val: any, newValue: any) => !Object.is(val, newValue) 
+
+// 是否包含属性
+export const hasOwn = (val: any, key: any) => Object.prototype.hasOwnProperty.call(val, key)
