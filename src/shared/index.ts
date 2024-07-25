@@ -14,3 +14,20 @@ export const hanChanged = (val: any, newValue: any) => !Object.is(val, newValue)
 
 // 是否包含属性
 export const hasOwn = (val: any, key: any) => Object.prototype.hasOwnProperty.call(val, key)
+
+// 横线变为驼峰，add-foo => addFoo
+export const camelize = (str: string) => {
+    return str.replace(/-(\w)/g, (_, c: string) => {
+        return c ? c.toUpperCase() : ''
+    })
+}
+
+// 字符串第一个变大写（add => Add）
+export const capitalize = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+// 添加前缀 on add => onAdd
+export const toHandleKey = (str: string) => {
+    return str ? 'on' + capitalize(str) : ''
+}

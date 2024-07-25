@@ -12,10 +12,10 @@ export const App = {
                 id: 'root',
                 class: ['red', 'hard'],
                 onClick() {
-                    console.log('click')
+                    // console.log('click')
                 },
                 onMousedown() {
-                    console.log('mousedown')
+                    // console.log('mousedown')
                 }
             },
             // 单个
@@ -24,8 +24,15 @@ export const App = {
             [
                 h('p', { class: 'red' }, 'hi'),
                 h('p', { class: 'blue' }, 'mini-vue'),
+                // 组件嵌套
                 h(Foo, {
-                    count: 1
+                    count: 1,
+                    onAdd(a, b) {
+                        console.log('onAdd', a, b)
+                    },
+                    onAddFoo(a, b) {
+                        console.log('onAddFoo', a, b)
+                    }
                 })
             ]
         )
