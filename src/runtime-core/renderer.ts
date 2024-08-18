@@ -1,5 +1,6 @@
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './components'
+import { Fragment, Text } from './vnode'
 
 /**
  * render 渲染函数
@@ -17,13 +18,25 @@ export function render(vnode: any, container: any) {
  */
 function patch(vnode: any, container: any) {
     // ShapeFlags(标识vnode 类型)
-    const { shapeFlag } = vnode
-    if (shapeFlag & ShapeFlags.ELEMENT) {
-        // 如果vnode 是元素类型
-        processElement(vnode, container)
-    } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-        // 如果vnode 是组件类型
-        processComponent(vnode, container)
+    const { type, shapeFlag } = vnode
+
+    // Fragment => 只渲染 children
+    switch (type) {
+        case Fragment:
+            processFragment(vnode, container)
+            break
+        case Text:
+            processText(vnode, container)
+            break
+        default:
+            if (shapeFlag & ShapeFlags.ELEMENT) {
+                // 如果vnode 是元素类型
+                processElement(vnode, container)
+            } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
+                // 如果vnode 是组件类型
+                processComponent(vnode, container)
+            }
+            break
     }
 }
 
@@ -34,6 +47,16 @@ function patch(vnode: any, container: any) {
  */
 function processElement(vnode: any, container: any) {
     mountElement(vnode, container)
+}
+
+function processText(vnode: any, container: any) {
+    const { children } = vnode
+    const textNode = (vnode.el = document.createTextNode(children))
+    container.append(textNode)
+}
+
+function processFragment(vnode: any, container: any) {
+    mountChildren(vnode, container)
 }
 
 /**
