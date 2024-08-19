@@ -4,6 +4,8 @@ import { initProps } from './componentProps'
 import { PublicInstanceProxyHandlers } from './componentPublicInstance'
 import { initSlots } from './componentSlots'
 
+let currentInstance: any = null
+
 /**
  * 创建组件实例
  * @param vnode 虚拟节点
@@ -56,11 +58,19 @@ function setupStatefulComponent(instance: any) {
 
     const { setup } = Component
     if (setup) {
+        // 赋值全局变量：当前组件实例对象
+        setCurrentInstance(instance)
+
         // setup 可以是 Function 或 Object
         // 如果是 Function，则认为其是组件的render函数
         // 如果是 Object，则注入到组件上下文中
         // 使用shallowReadonly，使得 props 不可更改
-        const setupResult = setup(shallowReadonly(instance.props), { emit: instance.emit })
+        const setupResult = setup(shallowReadonly(instance.props), {
+            emit: instance.emit
+        })
+
+        // 重置全局变量：当前组件实例对象
+        setCurrentInstance(null)
 
         handleSetupResult(instance, setupResult)
     }
@@ -92,4 +102,12 @@ function finishComponentSetup(instance: any) {
     // 赋值组件的render 函数
     instance.render = Component.render
     // }
+}
+
+export function getCurrentInstance() {
+    return currentInstance
+}
+
+function setCurrentInstance(instance: any) {
+    currentInstance = instance
 }
