@@ -11,13 +11,15 @@ let currentInstance: any = null
  * @param vnode 虚拟节点
  * @returns
  */
-export function createComponentInstance(vnode: any) {
+export function createComponentInstance(vnode: any, parent: any) {
     const component = {
         vnode,
         type: vnode.type,
         setupState: {}, // 组件代理对象
         props: {},
         slots: {},
+        provides: parent ? parent.provides : {},
+        parent,
         emit: () => {}
     }
 

@@ -8,7 +8,7 @@ import { Fragment, Text } from './vnode'
  * @param container 容器
  */
 export function render(vnode: any, container: any) {
-    patch(vnode, container)
+    patch(vnode, container, null)
 }
 
 /**
@@ -16,14 +16,14 @@ export function render(vnode: any, container: any) {
  * @param vnode 虚拟节点
  * @param container 容器
  */
-function patch(vnode: any, container: any) {
+function patch(vnode: any, container: any, parentComponent: any) {
     // ShapeFlags(标识vnode 类型)
     const { type, shapeFlag } = vnode
 
     // Fragment => 只渲染 children
     switch (type) {
         case Fragment:
-            processFragment(vnode, container)
+            processFragment(vnode, container, parentComponent)
             break
         case Text:
             processText(vnode, container)
@@ -31,10 +31,10 @@ function patch(vnode: any, container: any) {
         default:
             if (shapeFlag & ShapeFlags.ELEMENT) {
                 // 如果vnode 是元素类型
-                processElement(vnode, container)
+                processElement(vnode, container, parentComponent)
             } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
                 // 如果vnode 是组件类型
-                processComponent(vnode, container)
+                processComponent(vnode, container, parentComponent)
             }
             break
     }
@@ -45,8 +45,8 @@ function patch(vnode: any, container: any) {
  * @param vnode 虚拟节点
  * @param container 容器
  */
-function processElement(vnode: any, container: any) {
-    mountElement(vnode, container)
+function processElement(vnode: any, container: any, parentComponent: any) {
+    mountElement(vnode, container, parentComponent)
 }
 
 function processText(vnode: any, container: any) {
@@ -55,8 +55,8 @@ function processText(vnode: any, container: any) {
     container.append(textNode)
 }
 
-function processFragment(vnode: any, container: any) {
-    mountChildren(vnode, container)
+function processFragment(vnode: any, container: any, parentComponent: any) {
+    mountChildren(vnode, container, parentComponent)
 }
 
 /**
@@ -64,7 +64,7 @@ function processFragment(vnode: any, container: any) {
  * @param vnode 虚拟节点
  * @param container 容器
  */
-function mountElement(vnode: any, container: any) {
+function mountElement(vnode: any, container: any, parentComponent: any) {
     // 创建元素（赋值到vnode上）
     const el = (vnode.el = document.createElement(vnode.type))
 
@@ -75,7 +75,7 @@ function mountElement(vnode: any, container: any) {
         el.textContent = children
     } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
         // 如果是 array_children
-        mountChildren(vnode, el)
+        mountChildren(vnode, el, parentComponent)
     }
     // props
     const { props } = vnode
@@ -96,9 +96,9 @@ function mountElement(vnode: any, container: any) {
     container.append(el)
 }
 
-function mountChildren(vnode: any, container: any) {
+function mountChildren(vnode: any, container: any, parentComponent: any) {
     vnode.children.forEach((v: any) => {
-        patch(v, container)
+        patch(v, container, parentComponent)
     })
 }
 
@@ -107,8 +107,8 @@ function mountChildren(vnode: any, container: any) {
  * @param vnode 虚拟节点
  * @param container 容器
  */
-function processComponent(vnode: any, container: any) {
-    mountComponent(vnode, container)
+function processComponent(vnode: any, container: any, parentComponent: any) {
+    mountComponent(vnode, container, parentComponent)
 }
 
 /**
@@ -116,7 +116,11 @@ function processComponent(vnode: any, container: any) {
  * @param initialVnode 虚拟节点
  * @param container 容器
  */
-function mountComponent(initialVnode: any, container: any) {
+function mountComponent(
+    initialVnode: any,
+    container: any,
+    parentComponent: any
+) {
     /**
      * 创建组件实例，initialVnode格式如下
      * {
@@ -135,7 +139,7 @@ function mountComponent(initialVnode: any, container: any) {
      *  vnode: 虚拟节点
      * }
      */
-    const instance = createComponentInstance(initialVnode)
+    const instance = createComponentInstance(initialVnode, parentComponent)
     // 初始化组件状态
     setupComponent(instance)
     // 创建渲染效果
@@ -152,7 +156,7 @@ function setupRenderEffect(instance: any, initialVnode: any, container: any) {
     const { proxy } = instance
     // 使render 函数的执行时指向 proxy对象，以获取正确数据
     const subTree = instance.render.call(proxy)
-    patch(subTree, container)
+    patch(subTree, container, instance)
 
     // 把根阶段元素赋值组件元素
     initialVnode.el = subTree.el
