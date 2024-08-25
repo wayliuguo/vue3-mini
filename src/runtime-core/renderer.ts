@@ -1,4 +1,5 @@
 import { effect } from '../reactivity/effect'
+import { isEmpty } from '../shared/index'
 import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './components'
 import { createAppAPI } from './createApp'
@@ -72,6 +73,37 @@ export function createRenderer(options: any) {
     function patchElement(n1: any, n2: any, container: any) {
         console.log('n1', n1)
         console.log('n2', n2)
+        const oldProps = n1.props || {}
+        const newProps = n2.props || {}
+
+        const el = (n2.el = n1.el)
+
+        patchProps(el, oldProps, newProps)
+    }
+
+    function patchProps(el: any, oldProps: any, newProps: any) {
+        if (oldProps !== newProps) {
+            // 遍历新虚拟节点
+            for (const key in newProps) {
+                const prevProp = oldProps[key]
+                const nextProp = newProps[key]
+
+                if (prevProp !== nextProp) {
+                    hostPathPro(el, key, prevProp, nextProp)
+                }
+            }
+
+            if (!isEmpty(oldProps)) {
+                // 遍历旧虚拟节点
+                for (const key in oldProps) {
+                    // 如果新的虚拟节点中已经删除了该key
+                    if (!(key in newProps)) {
+                        const prevProp = oldProps[key]
+                        hostPathPro(el, key, prevProp, null)
+                    }
+                }
+            }
+        }
     }
 
     function processText(n1: any, n2: any, container: any) {
@@ -111,7 +143,7 @@ export function createRenderer(options: any) {
         const { props } = vnode
         for (const key in props) {
             const val = props[key]
-            hostPathPro(el, key, val)
+            hostPathPro(el, key, null, val)
         }
 
         hostInsert(el, container)

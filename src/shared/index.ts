@@ -12,8 +12,29 @@ export const isObject = (val: any) => val !== null && typeof val === 'object'
 // 是否变更
 export const hanChanged = (val: any, newValue: any) => !Object.is(val, newValue) 
 
+export const isEmpty = (value: any) => {
+    if (value === null || value === undefined) {
+        return true
+    }
+
+    if (Array.isArray(value)) {
+        return value.length === 0
+    }
+
+    if (typeof value === 'object') {
+        return Object.keys(value).length === 0
+    }
+
+    if (typeof value === 'string') {
+        return value.length === 0
+    }
+
+    return false
+}
+
 // 是否包含属性
-export const hasOwn = (val: any, key: any) => Object.prototype.hasOwnProperty.call(val, key)
+export const hasOwn = (val: any, key: any) =>
+    Object.prototype.hasOwnProperty.call(val, key)
 
 // 横线变为驼峰，add-foo => addFoo
 export const camelize = (str: string) => {
@@ -31,3 +52,4 @@ export const capitalize = (str: string) => {
 export const toHandleKey = (str: string) => {
     return str ? 'on' + capitalize(str) : ''
 }
+

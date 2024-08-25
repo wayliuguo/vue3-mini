@@ -4,16 +4,20 @@ function createElement(type: any) {
     return document.createElement(type)
 }
 
-function patchPro(el: any, key: any, val: any) {
+function patchPro(el: any, key: any, preVal: any, nextVal: any) {
     // 校验该props 是事件
     const isOn = (key: any) => /^on[A-Z]/.test(key)
     if (isOn(key)) {
         // 获取监听事件名称
         const event = key.slice(2).toLocaleLowerCase()
         // 如果是事件，则添加事件监听
-        el.addEventListener(event, val)
+        el.addEventListener(event, nextVal)
     } else {
-        el.setAttribute(key, val)
+        if (nextVal === undefined || nextVal === null) {
+            el.removeAttribute(key)
+        } else {
+            el.setAttribute(key, nextVal)
+        }
     }
 }
 
