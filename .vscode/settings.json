@@ -28,5 +28,6 @@
     "eslint.codeActionsOnSave.rules": null, // 如果需要，可以指定某些规则在保存时执行
     "eslint.execArgv": null, // ESLint 执行的参数，通常不需要设置
 
-    "compile-hero.ignore": "" // 其他插件的配置
+    "compile-hero.ignore": "",
+    "liveServer.settings.port": 63345 // 其他插件的配置
 }
