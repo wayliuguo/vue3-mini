@@ -201,6 +201,14 @@ export function createRenderer(options: any) {
 
             const keyToNewIndexMap = new Map()
 
+            let moved = false
+            let maxNewIndexSoFar = 0
+
+            const newIndexToOldIndexMap = new Array(toBePatched)
+            for (let i = 0; i < toBePatched; i++) {
+                newIndexToOldIndexMap[i] = 0
+            }
+
             // 遍历新节点，构建映射表
             for (let i = s2; i <= e2; i++) {
                 const nextChild = c2[i]
@@ -232,6 +240,12 @@ export function createRenderer(options: any) {
                     // 如果不存在，则删除
                     hostRemove(prevChild.el)
                 } else {
+                    if (newIndex >= maxNewIndexSoFar) {
+                        maxNewIndexSoFar = newIndex
+                    } else {
+                        moved = true
+                    }
+                    newIndexToOldIndexMap[newIndex - s2] = i + 1
                     patch(
                         prevChild,
                         c2[newIndex],
@@ -240,6 +254,28 @@ export function createRenderer(options: any) {
                         null
                     )
                     patched++
+                }
+            }
+
+            // 移动逻辑
+            const increasingNewIndexSequence = moved
+                ? getSequence(newIndexToOldIndexMap)
+                : []
+            let j = increasingNewIndexSequence.length - i
+
+            for (let i = toBePatched; i >= 0; i--) {
+                const nextIndex = i + s2
+                const nextChild = c2[nextIndex]
+                const anchor = nextIndex + 1 < l2 ? c2[nextIndex + 1].el : null
+
+                if (newIndexToOldIndexMap[i] === 0) {
+                    patch(null, nextChild, container, parentComponent, anchor)
+                } else if (moved) {
+                    if (j < 0 || i !== increasingNewIndexSequence[j]) {
+                        hostInsert(nextChild.el, container, anchor)
+                    } else {
+                        j--
+                    }
                 }
             }
         }
@@ -433,4 +469,46 @@ export function createRenderer(options: any) {
     return {
         createApp: createAppAPI(render)
     }
+}
+
+function getSequence(arr: any) {
+    const p = arr.slice()
+    const result = [0]
+    let i, j, u, v, c
+    const len = arr.length
+    for (i = 0; i < len; i++) {
+        const arrI = arr[i]
+        if (arrI !== 0) {
+            j = result[result.length - 1]
+            if (arr[j] < arrI) {
+                p[i] = j
+                result.push(i)
+                continue
+            }
+
+            u = 0
+            v = result.length - 1
+            while (u < v) {
+                c = (u + v) >> 1
+                if (arr[result[c]] < arrI) {
+                    u = c + 1
+                } else {
+                    v = c
+                }
+            }
+            if (arrI < arr[result[u]]) {
+                if (u > 0) {
+                    p[i] = result[u - 1]
+                }
+                result[u] = i
+            }
+        }
+    }
+    u = result.length
+    v = result[u - 1]
+    while (u-- > 0) {
+        result[u] = v
+        v = p[v]
+    }
+    return result
 }
