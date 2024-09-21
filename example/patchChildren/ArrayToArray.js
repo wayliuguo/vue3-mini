@@ -38,13 +38,13 @@ import { ref, h } from '../../lib/guide-mini-vue3.esm.js'
 // (a b)
 // (a b) c d
 // i = 2, e1 =1, e2 = 3
-const prevChildren = [h('p', { key: 'A' }, 'A'), h('p', { key: 'B' }, 'B')]
-const nextChildren = [
-    h('p', { key: 'A' }, 'A'),
-    h('p', { key: 'B' }, 'B'),
-    h('p', { key: 'C' }, 'C'),
-    h('p', { key: 'D' }, 'D')
-]
+// const prevChildren = [h('p', { key: 'A' }, 'A'), h('p', { key: 'B' }, 'B')]
+// const nextChildren = [
+//     h('p', { key: 'A' }, 'A'),
+//     h('p', { key: 'B' }, 'B'),
+//     h('p', { key: 'C' }, 'C'),
+//     h('p', { key: 'D' }, 'D')
+// ]
 // 右侧
 // (a b)
 // d c (a b)
@@ -80,6 +80,53 @@ const nextChildren = [
 //     h('p', { key: 'B' }, 'B')
 // ]
 // const nextChildren = [h('p', { key: 'A' }, 'A'), h('p', { key: 'B' }, 'B')]
+
+// 5. 对比中间的部分
+// 删除老的（在老的里面存在，新的里面不存在）
+// 5.1
+// a,b,(c,d),f,g
+// a,b,(e,c),f,g
+// d 节点在新的里面是没有的 - 需要删除
+// c 节点在 props 也发生了变化
+// const prevChildren = [
+//     h('p', { key: 'A' }, 'A'),
+//     h('p', { key: 'B' }, 'B'),
+//     h('p', { key: 'C', id: 'c-prev' }, 'C'),
+//     h('p', { key: 'D' }, 'D'),
+//     h('p', { key: 'F' }, 'F'),
+//     h('p', { key: 'G' }, 'G')
+// ]
+// const nextChildren = [
+//     h('p', { key: 'A' }, 'A'),
+//     h('p', { key: 'B' }, 'B'),
+//     h('p', { key: 'E' }, 'E'),
+//     h('p', { key: 'C', id: 'c-prev' }, 'C'),
+//     h('p', { key: 'F' }, 'F'),
+//     h('p', { key: 'G' }, 'G')
+// ]
+
+// 5.1.1
+// a,b,(c,e,d),f,g
+// a,b,(e,c),f,g
+// 中间部分，老的比新的多，那么多出来的直接就可以删除了（5.1的优化逻辑）
+const prevChildren = [
+    h('p', { key: 'A' }, 'A'),
+    h('p', { key: 'B' }, 'B'),
+    h('p', { key: 'C', id: 'c-prev' }, 'C'),
+    h('p', { key: 'E' }, 'E'),
+    h('p', { key: 'D' }, 'D'),
+    h('p', { key: 'F' }, 'F'),
+    h('p', { key: 'G' }, 'G')
+]
+const nextChildren = [
+    h('p', { key: 'A' }, 'A'),
+    h('p', { key: 'B' }, 'B'),
+    h('p', { key: 'E' }, 'E'),
+    h('p', { key: 'C', id: 'c-prev' }, 'C'),
+    h('p', { key: 'F' }, 'F'),
+    h('p', { key: 'G' }, 'G')
+]
+
 
 export default {
     name: 'ArrayToArray',

@@ -140,7 +140,7 @@ export function createRenderer(options: any) {
         let e1 = c1.length - 1
         let e2 = l2 - 1
 
-        function isSomeVnodeType(n1: any, n2: any) {
+        function isSameVnodeType(n1: any, n2: any) {
             // type
             // key
             return n1.type === n2.type && n1.key === n2.key
@@ -151,7 +151,7 @@ export function createRenderer(options: any) {
             const n1 = c1[i]
             const n2 = c2[i]
 
-            if (isSomeVnodeType(n1, n2)) {
+            if (isSameVnodeType(n1, n2)) {
                 patch(n1, n2, container, parentComponent, parentAnchor)
             } else {
                 break
@@ -164,7 +164,7 @@ export function createRenderer(options: any) {
             const n1 = c1[e1]
             const n2 = c2[e2]
 
-            if (isSomeVnodeType(n1, n2)) {
+            if (isSameVnodeType(n1, n2)) {
                 patch(n1, n2, container, parentComponent, parentAnchor)
             } else {
                 break
@@ -190,7 +190,58 @@ export function createRenderer(options: any) {
                 i++
             }
         } else {
-            // 乱序对比
+            // 中间对比
+            let s1 = i
+            let s2 = i
+
+            // 需要比较的个数
+            const toBePatched = e2 - s2 + 1
+            // 已对比的个数
+            let patched = 0
+
+            const keyToNewIndexMap = new Map()
+
+            // 遍历新节点，构建映射表
+            for (let i = s2; i <= e2; i++) {
+                const nextChild = c2[i]
+                keyToNewIndexMap.set(nextChild.key, i)
+            }
+
+            for (let i = s1; i <= e1; i++) {
+                const prevChild = c1[i]
+
+                if (patched >= toBePatched) {
+                    // 如果已对比的个数大于需要对比的个数，则剩余的可以删除
+                    hostRemove(prevChild.el)
+                    container
+                }
+
+                let newIndex
+                if (prevChild.key !== null) {
+                    newIndex = keyToNewIndexMap.get(prevChild.key)
+                } else {
+                    for (let j = s2; i < e2; j++) {
+                        if (isSameVnodeType(prevChild, c2[j])) {
+                            newIndex = j
+                            break
+                        }
+                    }
+                }
+
+                if (newIndex === undefined) {
+                    // 如果不存在，则删除
+                    hostRemove(prevChild.el)
+                } else {
+                    patch(
+                        prevChild,
+                        c2[newIndex],
+                        container,
+                        parentComponent,
+                        null
+                    )
+                    patched++
+                }
+            }
         }
     }
 
