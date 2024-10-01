@@ -228,7 +228,7 @@ export function createRenderer(options: any) {
                 if (prevChild.key !== null) {
                     newIndex = keyToNewIndexMap.get(prevChild.key)
                 } else {
-                    for (let j = s2; i < e2; j++) {
+                    for (let j = s2; i <= e2; j++) {
                         if (isSameVnodeType(prevChild, c2[j])) {
                             newIndex = j
                             break
