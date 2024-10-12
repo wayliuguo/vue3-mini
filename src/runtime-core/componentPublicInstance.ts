@@ -2,7 +2,8 @@ import { hasOwn } from '../shared/index'
 
 const publicPropertiesMap = {
     $el: (i: any) => i.vnode.el, // $el 的处理方法
-    $slots: (i: any) => i.slots // $slots 的处理方法
+    $slots: (i: any) => i.slots, // $slots 的处理方法
+    $props: (i: any) => i.props // $props 的处理方法
 } as any
 
 export const PublicInstanceProxyHandlers = {

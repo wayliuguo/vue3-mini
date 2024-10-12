@@ -15,6 +15,8 @@ export function createVnode(type: any, props?: any, children?: any) {
         type,
         props,
         children,
+        component: null,
+        next: null, // 下次要更新的虚拟节点
         key: props?.key,
         shapeFlag: getShapeFlag(type),
         el: null
