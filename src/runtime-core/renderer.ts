@@ -4,6 +4,7 @@ import { ShapeFlags } from '../shared/ShapeFlags'
 import { createComponentInstance, setupComponent } from './components'
 import { shouldUpdateComponent } from './componentUpdateUtils'
 import { createAppAPI } from './createApp'
+import { queueJobs } from './scheduler'
 import { Fragment, Text } from './vnode'
 
 export function createRenderer(options: any) {
@@ -463,40 +464,49 @@ export function createRenderer(options: any) {
         anchor: any
     ) {
         // 保存 update 函数
-        instance.update = effect(() => {
-            if (!instance.isMounted) {
-                const { proxy } = instance
-                // 使render 函数的执行时指向 proxy对象，以获取正确数据
-                // instance.subTree：记录当前的 subTree
-                const subTree = (instance.subTree = instance.render.call(proxy))
-                patch(null, subTree, container, instance, anchor)
+        instance.update = effect(
+            () => {
+                if (!instance.isMounted) {
+                    const { proxy } = instance
+                    // 使render 函数的执行时指向 proxy对象，以获取正确数据
+                    // instance.subTree：记录当前的 subTree
+                    const subTree = (instance.subTree =
+                        instance.render.call(proxy))
+                    patch(null, subTree, container, instance, anchor)
 
-                // 把根阶段元素赋值组件元素
-                initialVnode.el = subTree.el
+                    // 把根阶段元素赋值组件元素
+                    initialVnode.el = subTree.el
 
-                // 标识已经挂载了
-                instance.isMounted = true
-            } else {
-                // 更新逻辑
+                    // 标识已经挂载了
+                    instance.isMounted = true
+                } else {
+                    // 更新逻辑
 
-                const { proxy, next, vnode } = instance
+                    const { proxy, next, vnode } = instance
 
-                if (next) {
-                    next.el = vnode.el
-                    updateComponentPreRender(instance, next)
+                    if (next) {
+                        next.el = vnode.el
+                        updateComponentPreRender(instance, next)
+                    }
+
+                    // 当前最新subTree
+                    const subTree = instance.render.call(proxy)
+                    // 旧 subTree
+                    const prevSubTree = instance.subTree
+
+                    // 更新 instance.subTree
+                    instance.subTree = subTree
+
+                    patch(prevSubTree, subTree, container, instance, anchor)
                 }
-
-                // 当前最新subTree
-                const subTree = instance.render.call(proxy)
-                // 旧 subTree
-                const prevSubTree = instance.subTree
-
-                // 更新 instance.subTree
-                instance.subTree = subTree
-
-                patch(prevSubTree, subTree, container, instance, anchor)
+            },
+            {
+                scheduler() {
+                    console.log('update - scheduler')
+                    queueJobs(instance.update)
+                }
             }
-        })
+        )
     }
 
     return {
