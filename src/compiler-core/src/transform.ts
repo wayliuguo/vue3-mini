@@ -1,8 +1,13 @@
-export function transform(root: any, options: any) {
+export function transform(root: any, options: any = {}) {
     const context = createTransformContext(root, options)
     // 1. 遍历 - 深度优先搜索
     traverseNode(root, context)
     // 2. 修改 text content
+    createRootCodegen(root)
+}
+
+function createRootCodegen(root: any) {
+    root.codegenNode = root.children[0]
 }
 
 // 创建全局对象, 存储源对象及插件列表
