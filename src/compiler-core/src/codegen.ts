@@ -63,9 +63,11 @@ function genNode(node: any, context: any) {
 
         case NodeTypes.INTERPOLATION:
             genInterpolation(node, context)
+            break
 
         case NodeTypes.SIMPLE_EXPRESSION:
             getExpression(node, context)
+            break
         default:
             break
     }
