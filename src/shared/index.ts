@@ -53,3 +53,4 @@ export const toHandleKey = (str: string) => {
     return str ? 'on' + capitalize(str) : ''
 }
 
+export const isString = (value: any) => typeof value === 'string'
