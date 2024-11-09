@@ -1,5 +1,9 @@
 import { NodeTypes } from './ast'
-import { helperMapName, TO_DISPLAY_STRING } from './runtimeHelpers'
+import {
+    CREATE_ELEMENT_VNODE,
+    helperMapName,
+    TO_DISPLAY_STRING
+} from './runtimeHelpers'
 
 export function generate(ast: any) {
     // 创建一个全局变量
@@ -68,6 +72,9 @@ function genNode(node: any, context: any) {
         case NodeTypes.SIMPLE_EXPRESSION:
             getExpression(node, context)
             break
+        case NodeTypes.ELEMENT:
+            getElement(node, context)
+            break
         default:
             break
     }
@@ -89,4 +96,10 @@ function getExpression(node: any, context: any) {
     const { push } = context
 
     push(`${node.content}`)
+}
+
+function getElement(node: any, context: any) {
+    const { push, helper } = context
+    const { tag } = node
+    push(`${helper(CREATE_ELEMENT_VNODE)}('${tag}')`)
 }
