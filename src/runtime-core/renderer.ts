@@ -470,8 +470,10 @@ export function createRenderer(options: any) {
                     const { proxy } = instance
                     // 使render 函数的执行时指向 proxy对象，以获取正确数据
                     // instance.subTree：记录当前的 subTree
-                    const subTree = (instance.subTree =
-                        instance.render.call(proxy))
+                    const subTree = (instance.subTree = instance.render.call(
+                        proxy,
+                        proxy
+                    ))
                     patch(null, subTree, container, instance, anchor)
 
                     // 把根阶段元素赋值组件元素
@@ -490,7 +492,7 @@ export function createRenderer(options: any) {
                     }
 
                     // 当前最新subTree
-                    const subTree = instance.render.call(proxy)
+                    const subTree = instance.render.call(proxy, proxy)
                     // 旧 subTree
                     const prevSubTree = instance.subTree
 

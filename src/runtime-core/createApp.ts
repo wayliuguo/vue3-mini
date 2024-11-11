@@ -1,4 +1,4 @@
-import { createVnode } from './vnode'
+import { createVNode } from './vnode'
 
 export function createAppAPI(render: any) {
     /**
@@ -20,7 +20,7 @@ export function createAppAPI(render: any) {
              */
             mount(rootContainer: any) {
                 /**
-                 * 通过 createVnode 生成虚拟节点，其格式如下
+                 * 通过 createVNode 生成虚拟节点，其格式如下
                  * {
                  *  children // 子节点
                  *  el // 真实节点
@@ -28,7 +28,7 @@ export function createAppAPI(render: any) {
                  *  type // 根组件（{render(){}, setup(){}}）
                  * }
                  */
-                const vnode = createVnode(rootComponent)
+                const vnode = createVNode(rootComponent)
                 // 调用渲染函数
                 render(vnode, rootContainer)
             }

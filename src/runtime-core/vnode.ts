@@ -2,6 +2,7 @@ import { ShapeFlags } from '../shared/ShapeFlags'
 
 export const Fragment = Symbol('Fragment')
 export const Text = Symbol('Text')
+export { createVNode as createElementVNode }
 
 /**
  * 创建虚拟节点函数
@@ -10,7 +11,7 @@ export const Text = Symbol('Text')
  * @param children 子组件
  * @returns 虚拟节点
  */
-export function createVnode(type: any, props?: any, children?: any) {
+export function createVNode(type: any, props?: any, children?: any) {
     const vnode = {
         type,
         props,
@@ -39,7 +40,7 @@ export function createVnode(type: any, props?: any, children?: any) {
 }
 
 export function createTextVnode(text: string) {
-    return createVnode(Text, {}, text)
+    return createVNode(Text, {}, text)
 }
 
 /**

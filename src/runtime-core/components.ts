@@ -6,6 +6,7 @@ import { PublicInstanceProxyHandlers } from './componentPublicInstance'
 import { initSlots } from './componentSlots'
 
 let currentInstance: any = null
+let compiler: any
 
 /**
  * 创建组件实例
@@ -103,10 +104,10 @@ function handleSetupResult(instance: any, setupResult: any) {
  */
 function finishComponentSetup(instance: any) {
     const Component = instance.type
-    // if (Component.render) {
-    // 赋值组件的render 函数
+    if (compiler && !Component.render) {
+        Component.render = compiler(Component.template)
+    }
     instance.render = Component.render
-    // }
 }
 
 export function getCurrentInstance() {
@@ -115,4 +116,8 @@ export function getCurrentInstance() {
 
 function setCurrentInstance(instance: any) {
     currentInstance = instance
+}
+
+export function registerRuntimeCompiler(_compiler: any) {
+    compiler = _compiler
 }

@@ -1,3 +1,4 @@
+export * from './toDisplayString'
 // 对象属性合并
 export const extend = Object.assign
 // reactive 标识枚举
@@ -10,7 +11,7 @@ export const enum ReactiveFlags {
 export const isObject = (val: any) => val !== null && typeof val === 'object'
 
 // 是否变更
-export const hanChanged = (val: any, newValue: any) => !Object.is(val, newValue) 
+export const hanChanged = (val: any, newValue: any) => !Object.is(val, newValue)
 
 export const isEmpty = (value: any) => {
     if (value === null || value === undefined) {
