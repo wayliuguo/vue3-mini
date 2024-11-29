@@ -1,4 +1,4 @@
-import { hanChanged, isObject, ReactiveFlags } from '../shared'
+import { hanChanged, isObject, ReactiveFlags } from '../shared/index'
 import { isTracking, trackEffects, triggerEffects } from './effect'
 import { reactive } from './reactive'
 
@@ -49,19 +49,19 @@ export function unRef(ref: any) {
     return isRef(ref) ? ref.value : ref
 }
 
-// 
-export function proxyRefs (objectWithRefs: any) {
+//
+export function proxyRefs(objectWithRefs: any) {
     return new Proxy(objectWithRefs, {
-        get (target, key) {
+        get(target, key) {
             // 通过unRef 省略.value
             return unRef(Reflect.get(target, key))
         },
 
-        set (target, key, value) {
+        set(target, key, value) {
             if (isRef(target[key]) && !isRef(value)) {
                 // 如果原来属性是ref，设为非 ref
                 // 直接改变其value属性值
-                return target[key].value = value
+                return (target[key].value = value)
             } else {
                 return Reflect.set(target, key, value)
             }

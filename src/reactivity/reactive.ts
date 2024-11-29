@@ -1,6 +1,9 @@
-import { ReactiveFlags } from '../shared'
-import { isObject } from '../shared/index'
-import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from './baseHandlers'
+import { ReactiveFlags, isObject } from '../shared/index'
+import {
+    mutableHandlers,
+    readonlyHandlers,
+    shallowReadonlyHandlers
+} from './baseHandlers'
 
 export function reactive(raw: object) {
     return createReactiveObject(raw, mutableHandlers)
