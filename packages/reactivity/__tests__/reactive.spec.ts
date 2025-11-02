@@ -1,4 +1,4 @@
-import { reactive, isReactive, toRaw, reactiveMap } from "../src/reactive";
+import { reactive, isReactive, toRaw } from "../src/reactive";
 describe("reactive", () => {
   test("Object", () => {
     const original = { foo: 1 };
